@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>FabricPro — My Dashboard</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    body { padding-bottom: var(--mobile-nav-h); background: var(--bg); }
+    .worker-page { max-width: 480px; margin: 0 auto; padding: 16px; }
+    .worker-page.hidden { display:none; }
+    .earnings-card { background:linear-gradient(135deg,#1D4ED8 0%,#7C3AED 100%); border-radius:20px; padding:24px; color:#fff; margin-bottom:20px; }
+    .earnings-card .label { font-size:.8rem; opacity:.8; margin-bottom:4px; }
+    .earnings-card .amount { font-size:2.4rem; font-weight:800; line-height:1.1; margin-bottom:4px; }
+    .earnings-card .period { font-size:.78rem; opacity:.65; }
+    .earnings-mini-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:16px; }
+    .earnings-mini { background:rgba(255,255,255,.15); border-radius:12px; padding:10px; }
+    .earnings-mini h4 { font-size:.67rem; opacity:.75; margin-bottom:2px; }
+    .earnings-mini p { font-size:1rem; font-weight:700; }
+    .task-card { background:var(--surface); border-radius:16px; border:1px solid var(--border-light); padding:16px; margin-bottom:12px; box-shadow:var(--shadow-sm); }
+    .task-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .task-card-meta { display:flex; gap:16px; margin-bottom:14px; }
+    .task-card-meta-item { display:flex; align-items:center; gap:5px; font-size:.8rem; color:var(--text-secondary); }
+    .task-card-meta-item svg { width:14px; height:14px; }
+    .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+    .action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:18px 12px; border-radius:16px; border:2px solid var(--border-light); background:var(--surface); cursor:pointer; transition:all .2s; font-size:.83rem; font-weight:600; color:var(--text-secondary); }
+    .action-btn:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-light); }
+    .action-btn svg { width:28px; height:28px; }
+    .notif-item { display:flex; align-items:flex-start; gap:10px; padding:12px; border-radius:12px; border:1px solid var(--border-light); background:var(--surface); margin-bottom:10px; }
+    .section-title { font-size:.95rem; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+    .section-title svg { width:18px; height:18px; color:var(--primary); }
+    .mobile-header { background:var(--surface); border-bottom:1px solid var(--border-light); padding:0 16px; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:var(--shadow-sm); }
+    .mobile-header-logo { display:flex; align-items:center; gap:10px; }
+    .mobile-header-logo-icon { width:36px; height:36px; background:var(--primary); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+    .mobile-header-logo-icon svg { width:20px; height:20px; color:#fff; }
+    .mobile-header-logo span { font-size:1rem; font-weight:800; color:var(--text-primary); }
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; height:var(--mobile-nav-h); background:var(--surface); border-top:1px solid var(--border); display:flex; z-index:200; box-shadow:0 -4px 20px rgba(15,23,42,.08); }
+    .bottom-nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--text-muted); font-size:.68rem; font-weight:500; cursor:pointer; transition:color .2s; padding:8px 4px; }
+    .bottom-nav-item svg { width:22px; height:22px; }
+    .bottom-nav-item.active { color:var(--primary); }
+    .worker-stat-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px; }
+    .worker-stat { background:var(--surface); border:1px solid var(--border-light); border-radius:12px; padding:12px; text-align:center; }
+    .worker-stat .sv { font-size:1.25rem; font-weight:800; color:var(--text-primary); }
+    .worker-stat .sl { font-size:.7rem; color:var(--text-muted); font-weight:500; }
+  </style>
+</head>
+<body>
+
+<div class="mobile-header">
+  <div class="mobile-header-logo">
+    <div class="mobile-header-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    </div>
+    <span>FabricPro</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="lang-switch" style="gap:4px;">
+      <button class="lang-btn btn-sm" data-lang="en" style="padding:5px 10px;font-size:.72rem;">EN</button>
+      <button class="lang-btn btn-sm" data-lang="ne" style="padding:5px 10px;font-size:.72rem;">ने</button>
+    </div>
+    <div class="avatar-placeholder avatar-sm" id="workerAvatar" style="background:#059669;">SK</div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="wHome" class="worker-page">
+  <div style="margin-bottom:16px;">
+    <h2 id="workerGreeting">Bonjour 👋</h2>
+    <p style="color:var(--text-secondary);font-size:.88rem;">Here's your work summary for today.</p>
+  </div>
+  <div class="earnings-card">
+    <div class="label" data-i18n="myEarnings">My Earnings</div>
+    <div class="amount" id="wTotalEarnings">Rs 0</div>
+    <div class="period" id="wEarningsPeriod">Loading...</div>
+    <div class="earnings-mini-grid">
+      <div class="earnings-mini"><h4>Today</h4><p id="wTodayEarnings">Rs 0</p></div>
+      <div class="earnings-mini"><h4>This Week</h4><p id="wWeekEarnings">Rs 0</p></div>
+      <div class="earnings-mini"><h4>Pieces</h4><p id="wPieces">0</p></div>
+    </div>
+  </div>
+  <div class="attend-card" id="wAttendCard">
+    <div class="attend-card-info">
+      <h4>📅 Attendance</h4>
+      <p id="wAttendStatus">Loading status...</p>
+    </div>
+    <button class="attend-card-btn check-in" id="wAttendBtn" data-action="worker-attend">Check In</button>
+  </div>
+  <div class="worker-stat-row">
+    <div class="worker-stat"><div class="sv" id="wQualScore">—</div><div class="sl">Quality Score</div></div>
+    <div class="worker-stat"><div class="sv" id="wRank">—</div><div class="sl">Rank</div></div>
+    <div class="worker-stat"><div class="sv" id="wEfficiency">—</div><div class="sl">Pcs/Day</div></div>
+  </div>
+  <div class="action-grid">
+    <div class="action-btn" data-nav="wTasks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span data-i18n="myTasks">My Tasks</span>
+    </div>
+    <div class="action-btn" data-action="nav-material">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <span data-i18n="requestMaterial">Request Material</span>
+    </div>
+    <div class="action-btn" data-action="nav-leave">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span data-i18n="applyLeave">Apply Leave</span>
+    </div>
+    <div class="action-btn" data-nav="wNotifs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span data-i18n="notifications">Notifications</span>
+      <span class="badge badge-danger" id="wNotifBadge" style="font-size:.65rem;padding:2px 6px;">3</span>
+    </div>
+  </div>
+  <div class="section-title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    Recent Messages
+  </div>
+  <div id="wRecentNotifs"></div>
+</div>
+
+<!-- TASKS -->
+<div id="wTasks" class="worker-page hidden">
+  <div style="margin-bottom:16px;"><h2 data-i18n="myTasks">My Tasks</h2><p style="color:var(--text-secondary);font-size:.88rem;">Your assigned tasks for today</p></div>
+  <div id="workerTaskList"></div>
+</div>
+
+<!-- EARNINGS -->
+<div id="wEarnings" class="worker-page hidden">
+  <div style="margin-bottom:16px;"><h2>My Earnings</h2><p style="color:var(--text-secondary);font-size:.88rem;">Salary & payment history</p></div>
+  <div class="earnings-card">
+    <div class="label">Total Earned This Month</div>
+    <div class="amount" id="wEarningsTotal">Rs 0</div>
+    <div class="period" id="wEarningsCycle">Current cycle</div>
+    <div class="earnings-mini-grid">
+      <div class="earnings-mini"><h4>Pieces</h4><p id="wEarningsPcs">0</p></div>
+      <div class="earnings-mini"><h4>Rate</h4><p>Rs 25/pc</p></div>
+      <div class="earnings-mini"><h4>Bonus</h4><p id="wEarningsBonus">Rs 0</p></div>
+    </div>
+  </div>
+  <div class="section-title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    Payment History
+  </div>
+  <div id="wPayHistory"></div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div id="wNotifs" class="worker-page hidden">
+  <div style="margin-bottom:16px;"><h2 data-i18n="notifications">Notifications</h2><p style="color:var(--text-secondary);font-size:.88rem;">Messages & updates from factory owner</p></div>
+  <div id="wNotifList"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="wProfile" class="worker-page hidden">
+  <div style="margin-bottom:16px;"><h2 data-i18n="profile">Profile</h2></div>
+  <div style="background:linear-gradient(135deg,#1D4ED8,#7C3AED);border-radius:20px;padding:24px;text-align:center;color:#fff;margin-bottom:20px;">
+    <div class="avatar-placeholder avatar-xl" id="profileAvatar" style="background:rgba(255,255,255,.25);margin:0 auto 12px;font-size:1.5rem;">SK</div>
+    <h3 id="profileName" style="font-size:1.1rem;font-weight:700;">Worker Name</h3>
+    <p id="profileDept" style="opacity:.8;font-size:.85rem;">Department</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;">
+      <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:10px;"><div style="font-size:.65rem;opacity:.75;">Pieces</div><div style="font-size:1rem;font-weight:700;" id="profPieces">0</div></div>
+      <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:10px;"><div style="font-size:.65rem;opacity:.75;">Earnings</div><div style="font-size:1rem;font-weight:700;" id="profEarnings">Rs 0</div></div>
+      <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:10px;"><div style="font-size:.65rem;opacity:.75;">Quality</div><div style="font-size:1rem;font-weight:700;" id="profQuality">—</div></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+    <div class="action-btn" style="flex-direction:row;justify-content:flex-start;gap:12px;" data-action="nav-leave">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span data-i18n="applyLeave">Apply Leave</span>
+    </div>
+    <button class="action-btn" style="border-color:#FEE2E2;color:#EF4444;flex-direction:row;justify-content:flex-start;gap:12px;" data-logout>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span data-i18n="logoutBtn">Logout</span>
+    </button>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-item active" data-nav="wHome">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 12 15 12 15 22 9 22 9 12"/></svg>
+    Home
+  </div>
+  <div class="bottom-nav-item" data-nav="wTasks">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <span data-i18n="tasks">Tasks</span>
+  </div>
+  <div class="bottom-nav-item" data-nav="wEarnings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    Earnings
+  </div>
+  <div class="bottom-nav-item" data-nav="wNotifs" style="position:relative;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <span style="position:absolute;top:8px;right:22px;width:7px;height:7px;background:#EF4444;border-radius:50%;border:1.5px solid #fff;"></span>
+    <span data-i18n="notifications">Alerts</span>
+  </div>
+  <div class="bottom-nav-item" data-nav="wProfile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span data-i18n="profile">Profile</span>
+  </div>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>FabricPro — Task Submission</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    body { background:var(--bg); min-height:100vh; }
+    .page-wrap { max-width:480px; margin:0 auto; padding:0 0 30px; }
+    .top-bar { background:var(--surface); border-bottom:1px solid var(--border-light); padding:0 16px; height:60px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:100; box-shadow:var(--shadow-sm); }
+    .back-btn { display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1.5px solid var(--border);background:none;cursor:pointer;transition:all .2s; }
+    .back-btn:hover { background:var(--bg);border-color:var(--primary); }
+    .back-btn svg { width:18px;height:18px;color:var(--text-primary); }
+    .hero-task { background:linear-gradient(135deg,#1D4ED8,#059669); border-radius:0 0 24px 24px; padding:24px 20px; color:#fff; margin-bottom:20px; }
+    .hero-task .task-label { font-size:.75rem;opacity:.75;margin-bottom:4px; }
+    .hero-task .task-title { font-size:1.2rem;font-weight:800;margin-bottom:12px; }
+    .task-meta-row { display:flex;gap:16px; }
+    .task-meta-item { display:flex;align-items:center;gap:6px;font-size:.8rem;opacity:.85; }
+    .task-meta-item svg { width:15px;height:15px; }
+    .content-pad { padding:0 16px; }
+    .detail-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px; }
+    .detail-box { background:var(--surface);border:1px solid var(--border-light);border-radius:12px;padding:14px; }
+    .detail-box .label { font-size:.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px; }
+    .detail-box .value { font-size:.95rem;font-weight:700;color:var(--text-primary); }
+    .upload-zone { border:2px dashed var(--border);border-radius:16px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;color:var(--text-muted);background:var(--surface); }
+    .upload-zone:hover { border-color:var(--primary);background:var(--primary-light);color:var(--primary); }
+    .upload-zone svg { width:40px;height:40px;margin:0 auto 10px; }
+    .upload-zone h4 { font-size:.9rem;font-weight:600;margin-bottom:4px; }
+    .upload-zone p { font-size:.78rem; }
+    .uploaded-preview { display:none;border-radius:12px;overflow:hidden;border:1px solid var(--border);position:relative;margin-top:12px; }
+    .uploaded-preview img { width:100%;height:160px;object-fit:cover; }
+    .uploaded-preview .remove-img { position:absolute;top:8px;right:8px;background:rgba(0,0,0,.5);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none; }
+    .piece-counter { background:var(--surface);border:1px solid var(--border-light);border-radius:16px;padding:16px;margin-bottom:16px; }
+    .piece-counter h4 { font-size:.85rem;font-weight:600;color:var(--text-secondary);margin-bottom:12px; }
+    .counter-controls { display:flex;align-items:center;gap:16px; }
+    .counter-btn { width:44px;height:44px;border-radius:12px;border:2px solid var(--border);background:none;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s; }
+    .counter-btn:hover { border-color:var(--primary);color:var(--primary); }
+    .counter-value { font-size:2rem;font-weight:800;flex:1;text-align:center;color:var(--text-primary); }
+    .counter-max { font-size:.78rem;color:var(--text-muted);text-align:center;margin-top:6px; }
+    .submit-section { padding:16px; }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <button class="back-btn" data-action="back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h2 style="font-size:1rem;" data-i18n="taskSubmission">Task Submission</h2>
+    </div>
+
+    <form id="taskForm">
+    <!-- Hero Task Info -->
+    <div class="hero-task">
+      <div class="task-label">Current Task</div>
+      <div class="task-title">Loading...</div>
+      <div class="task-meta-row">
+        <div class="task-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Due: Loading...</div>
+      </div>
+    </div>
+
+    <div class="content-pad">
+      <!-- Task Details -->
+      <h3 class="section-title" style="margin-bottom:12px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:var(--primary)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span data-i18n="taskDetails">Task Details</span>
+      </h3>
+      <div class="detail-grid">
+        <div class="detail-box"><div class="label">Target Pieces</div><div class="value" id="targetCount">0</div></div>
+        <div class="detail-box"><div class="label">Completed</div><div class="value" id="doneCount">0</div></div>
+        <div class="detail-box"><div class="label">Rate / Piece</div><div class="value" id="pieceRate">Rs 25</div></div>
+        <div class="detail-box"><div class="label">Est. Earnings</div><div class="value" id="earnAmt">Rs 0</div></div>
+      </div>
+
+      <!-- Progress -->
+      <div style="background:var(--surface);border:1px solid var(--border-light);border-radius:16px;padding:16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:8px;"><span style="font-weight:600;">Progress</span><span id="progressPct" style="font-weight:700;color:var(--primary);">0%</span></div>
+        <div class="progress-bar" style="height:10px;"><div class="progress-bar-fill blue" id="progressBar" style="width:0%"></div></div>
+      </div>
+
+      <!-- Piece Counter -->
+      <div class="piece-counter">
+        <h4>Pieces to Submit Now</h4>
+        <div class="counter-controls">
+          <button class="counter-btn" data-action="decrement-pieces">−</button>
+          <div class="counter-value" id="submitCount">1</div>
+          <input type="hidden" id="piecesDone" value="1"/>
+          <button class="counter-btn" data-action="increment-pieces">+</button>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group" style="margin-top:16px;">
+        <label class="form-label">Additional Notes</label>
+        <textarea class="form-textarea" id="taskNotes" placeholder="Optional notes..."></textarea>
+      </div>
+
+      <!-- Upload Proof -->
+      <h3 class="section-title" style="margin-bottom:12px; margin-top:24px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:var(--primary)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span data-i18n="uploadProof">Upload Image Proof</span>
+      </h3>
+      <div class="upload-zone" id="uploadZone" data-action="trigger-upload">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <h4 data-i18n="uploadProof">Upload Image Proof</h4>
+        <p data-i18n="uploadHint">Click to upload (optional)</p>
+        <input type="file" id="fileInput" accept="image/*" style="display:none" data-action="preview-image"/>
+      </div>
+      <div class="uploaded-preview" id="previewBox">
+        <img id="previewImg" src="" alt="Preview"/>
+        <button class="remove-img" data-action="remove-image">✕</button>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+      <button class="btn btn-success btn-w-full btn-lg" id="submitBtn" type="submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span data-i18n="submitWork">Submit Completed Work</span>
+      </button>
+    </div>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
