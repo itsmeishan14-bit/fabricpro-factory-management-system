@@ -490,11 +490,24 @@ async function doLogin(username, password) {
     return { success: false, message: res.message || t('loginError') };
   }
   setStoredUser(user);
+  // Save session token so every future request is authenticated
+  const token = res.raw && res.raw.token;
+  if (token) localStorage.setItem('cfms_token', token);
   return { success: true, user, message: res.message || 'Login successful.' };
 }
 
 function logout() {
+  // Tell the server to destroy the session token
+  const token = localStorage.getItem('cfms_token') || '';
+  if (token) {
+    fetch('/fabricpro/Backend/logout.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { Authorization: 'Bearer ' + token }
+    }).catch(() => {});
+  }
   localStorage.removeItem('cfms_user');
+  localStorage.removeItem('cfms_token');
   window.location.replace('index.html');
 }
 
@@ -552,10 +565,15 @@ async function apiFetch(endpoint, options = {}) {
     });
   }
 
+  // Attach session token to every request
+  const token = localStorage.getItem('cfms_token') || '';
   const fetchOptions = {
     method: settings.method,
     credentials: 'same-origin',
-    headers: { Accept: 'application/json' }
+    headers: {
+      Accept: 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    }
   };
 
   if (settings.method !== 'GET' && settings.data) {
@@ -578,6 +596,7 @@ async function apiFetch(endpoint, options = {}) {
 
     if ((response.status === 401 || response.status === 403) && getCurrentPage() !== 'index.html') {
       localStorage.removeItem('cfms_user');
+      localStorage.removeItem('cfms_token');
       window.location.replace('index.html');
       return { success: false, message: 'Session expired.' };
     }
@@ -1572,14 +1591,21 @@ async function loadSettings() {
 }
 
 async function saveProfile() {
-  const name = document.getElementById('pName').value;
-  const email = document.getElementById('pEmail').value;
-  const phone = document.getElementById('pPhone').value;
+  const name = document.getElementById('pName').value.trim();
+  const email = document.getElementById('pEmail').value.trim();
+  const phone = document.getElementById('pPhone').value.trim();
 
-  const res = await apiFetch('update_profile.php', {
+  if (!name) { showToast('Full name is required.', 'warning'); return; }
+
+  const btn = document.getElementById('updateProfileBtn');
+  setButtonLoading(btn, true, 'Saving...');
+
+  const res = await apiFetch('profile.php', {
     method: 'POST',
-    data: { name, email, phone }
+    data: { full_name: name, email, phone }
   });
+
+  setButtonLoading(btn, false);
 
   if (res.success) {
     const user = getStoredUser() || {};

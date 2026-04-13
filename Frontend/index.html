@@ -3,151 +3,559 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>FabricPro — Login</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <title>FabricPro — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
   <style>
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1D4ED8 100%);
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px; position: relative; overflow: hidden;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F5F0E8;
+      --bg2:       #EDE8DC;
+      --ink:       #1C1A14;
+      --ink2:      #3D3A2F;
+      --mid:       #7A7560;
+      --muted:     #A8A390;
+      --border:    #D8D2C2;
+      --white:     #FFFFFF;
+      --primary:   #2D5A3D;
+      --primary2:  #3D7A54;
+      --primary3:  #EAF3EE;
+      --gold:      #C8922A;
+      --gold2:     #F0B444;
+      --danger:    #C0392B;
+      --danger-bg: #FDF2F0;
+      --success:   #2D5A3D;
+      --success-bg:#EAF3EE;
     }
-    body::before {
-      content:''; position:absolute; width:600px; height:600px; border-radius:50%;
-      background: radial-gradient(circle, rgba(37,99,235,.25), transparent 70%);
-      top:-200px; right:-200px; pointer-events:none;
+
+    html, body { min-height: 100vh; font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--ink); }
+
+    .page { min-height: 100vh; display: grid; grid-template-columns: 1.1fr 1fr; }
+
+    /* ── LEFT ── */
+    .left {
+      background: var(--primary);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+      justify-content: space-between;
+      padding: 52px 56px;
     }
-    body::after {
-      content:''; position:absolute; width:400px; height:400px; border-radius:50%;
-      background: radial-gradient(circle, rgba(14,165,233,.2), transparent 70%);
-      bottom:-150px; left:-100px; pointer-events:none;
+    .left::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,.025) 3px, rgba(255,255,255,.025) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,.025) 3px, rgba(255,255,255,.025) 4px);
+      pointer-events: none;
     }
-    .login-container { width:100%; max-width:440px; position:relative; z-index:1; }
-    .login-card {
-      background: rgba(255,255,255,.97); backdrop-filter:blur(20px);
-      border-radius:24px; padding:40px 36px;
-      box-shadow:0 32px 64px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.1);
+    .left::after {
+      content: ''; position: absolute;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,146,42,.25) 0%, transparent 65%);
+      bottom: -200px; right: -150px; pointer-events: none;
     }
-    .login-header { text-align:center; margin-bottom:32px; }
-    .login-logo {
-      width:64px; height:64px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius:18px; display:flex; align-items:center; justify-content:center;
-      margin:0 auto 16px; box-shadow:0 8px 24px rgba(37,99,235,.35);
+    .brand { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+    .brand-mark { width: 46px; height: 46px; background: var(--gold2); border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .brand-mark svg { width: 24px; height: 24px; color: var(--primary); }
+    .brand-name { font-size: 1.35rem; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+    .left-body { position: relative; z-index: 1; }
+    .left-tag { display: inline-block; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 99px; padding: 5px 16px; font-size: .75rem; font-weight: 600; color: rgba(255,255,255,.75); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 28px; }
+    .left-heading { font-family: 'Lora', serif; font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 600; color: #fff; line-height: 1.2; letter-spacing: -.01em; margin-bottom: 20px; }
+    .left-heading em { font-style: italic; color: var(--gold2); }
+    .left-sub { font-size: .97rem; color: rgba(255,255,255,.65); line-height: 1.7; font-weight: 300; max-width: 380px; margin-bottom: 48px; }
+    .metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: rgba(255,255,255,.15); border-radius: 16px; overflow: hidden; margin-bottom: 40px; }
+    .metric { background: rgba(0,0,0,.15); padding: 20px 16px; text-align: center; }
+    .metric-val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 4px; }
+    .metric-val span { color: var(--gold2); }
+    .metric-lbl { font-size: .72rem; color: rgba(255,255,255,.5); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+    .features-list { display: flex; flex-direction: column; gap: 12px; }
+    .feature-item { display: flex; align-items: center; gap: 12px; font-size: .88rem; color: rgba(255,255,255,.7); font-weight: 400; }
+    .feature-dot { width: 7px; height: 7px; background: var(--gold2); border-radius: 50%; flex-shrink: 0; }
+    .left-footer { position: relative; z-index: 1; font-size: .75rem; color: rgba(255,255,255,.3); }
+
+    /* ── RIGHT ── */
+    .right {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 52px 56px; background: var(--bg); overflow-y: auto; position: relative;
     }
-    .login-logo svg { width:32px; height:32px; color:#fff; }
-    .login-header h1 { font-size:1.6rem; margin-bottom:4px; }
-    .login-header p { color:var(--text-secondary); font-size:.9rem; }
-    .lang-switch { display:flex; gap:8px; justify-content:flex-end; margin-bottom:24px; }
-    .pass-toggle {
-      position:absolute; right:14px; top:50%; transform:translateY(-50%);
-      color:var(--text-muted); cursor:pointer; display:flex; align-items:center;
+    .right::before { content: ''; position: absolute; top: 0; left: 0; width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, var(--border) 20%, var(--border) 80%, transparent); }
+    .form-panel { max-width: 400px; width: 100%; }
+
+    /* Tabs */
+    .tabs { display: flex; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 36px; gap: 2px; }
+    .tab-btn { flex: 1; padding: 10px; border-radius: 9px; border: none; background: none; font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .2s; }
+    .tab-btn.active { background: var(--white); color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+
+    /* Lang */
+    .lang-row { display: flex; gap: 6px; margin-bottom: 28px; }
+    .lang-btn { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); background: none; color: var(--muted); font-family: 'Outfit', sans-serif; font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .18s; }
+    .lang-btn.active, .lang-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary3); }
+
+    /* Heading */
+    .form-heading { margin-bottom: 28px; }
+    .form-heading h2 { font-family: 'Lora', serif; font-size: 1.75rem; font-weight: 600; color: var(--ink); letter-spacing: -.02em; margin-bottom: 6px; }
+    .form-heading p { font-size: .88rem; color: var(--muted); font-weight: 400; }
+
+    /* Fields */
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-size: .78rem; font-weight: 700; color: var(--ink2); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 7px; }
+    .input-wrap { position: relative; }
+    .field-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; display: flex; }
+    .field-icon svg { width: 16px; height: 16px; }
+    .field input, .field select { width: 100%; padding: 12px 13px 12px 40px; background: var(--white); border: 1.5px solid var(--border); border-radius: 11px; color: var(--ink); font-family: 'Outfit', sans-serif; font-size: .93rem; font-weight: 400; outline: none; transition: all .18s; -webkit-appearance: none; }
+    .field input::placeholder { color: var(--muted); font-weight: 300; }
+    .field input:focus, .field select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(45,90,61,.1); }
+    .field input:hover:not(:focus), .field select:hover:not(:focus) { border-color: #B8B2A2; }
+    .field select { cursor: pointer; }
+    .field select option { background: #fff; color: var(--ink); }
+    .eye-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); cursor: pointer; display: flex; padding: 4px; border-radius: 6px; transition: color .18s; }
+    .eye-btn:hover { color: var(--primary); }
+    .eye-btn svg { width: 17px; height: 17px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* Options */
+    .options-row { display: flex; align-items: center; justify-content: space-between; margin: 2px 0 22px; }
+    .check-wrap { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--mid); cursor: pointer; user-select: none; }
+    .check-wrap input { width: 15px; height: 15px; accent-color: var(--primary); cursor: pointer; }
+    .forgot { font-size: .85rem; color: var(--primary); font-weight: 600; text-decoration: none; }
+    .forgot:hover { text-decoration: underline; }
+
+    /* Strength */
+    .strength-row { display: flex; gap: 4px; margin-top: 7px; }
+    .strength-seg { flex: 1; height: 3px; border-radius: 99px; background: var(--border); transition: background .3s; }
+    .strength-hint { font-size: .75rem; color: var(--muted); margin-top: 4px; text-align: right; }
+
+    /* Alerts */
+    .alert { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 11px; font-size: .855rem; font-weight: 500; margin-bottom: 18px; animation: slideIn .25s ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .alert svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+    .alert-error   { background: var(--danger-bg); border: 1px solid #F5C6C2; color: var(--danger); }
+    .alert-success { background: var(--success-bg); border: 1px solid #B8DEC8; color: var(--success); }
+
+    /* Submit */
+    .submit-btn { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 11px; font-family: 'Outfit', sans-serif; font-size: .97rem; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: -.01em; }
+    .submit-btn:hover { background: var(--primary2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(45,90,61,.3); }
+    .submit-btn:active { transform: translateY(0); box-shadow: none; }
+    .submit-btn:disabled { opacity: .65; cursor: not-allowed; transform: none; box-shadow: none; }
+    .submit-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .signup-btn { background: var(--ink); }
+    .signup-btn:hover { background: var(--ink2); box-shadow: 0 8px 24px rgba(28,26,20,.25); }
+    .terms { font-size: .78rem; color: var(--muted); text-align: center; margin-top: 14px; line-height: 1.6; }
+    .terms a { color: var(--primary); text-decoration: none; font-weight: 500; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; flex-shrink: 0; }
+
+    .hidden { display: none !important; }
+    .mobile-brand { display: none; }
+
+    @media (max-width: 860px) {
+      .page { grid-template-columns: 1fr; }
+      .left { display: none; }
+      .right { padding: 40px 24px; justify-content: flex-start; padding-top: 50px; }
+      .right::before { display: none; }
+      .mobile-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+      .form-panel { max-width: 100%; }
+      .field-row { grid-template-columns: 1fr; gap: 0; }
     }
-    .pass-toggle:hover { color:var(--primary); }
-    .pass-toggle svg { width:18px; height:18px; }
-    .login-options {
-      display:flex; align-items:center; justify-content:space-between;
-      margin-bottom:24px; font-size:.85rem;
-    }
-    .checkbox-wrap { display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--text-secondary); }
-    .checkbox-wrap input { width:16px; height:16px; accent-color:var(--primary); }
-    .forgot-link { color:var(--primary); font-weight:600; }
-    .forgot-link:hover { text-decoration:underline; }
-    .login-btn {
-      width:100%; padding:14px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color:#fff; border-radius:var(--radius); font-size:1rem; font-weight:600;
-      box-shadow:0 8px 20px rgba(37,99,235,.35); transition:all .25s;
-    }
-    .login-btn:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(37,99,235,.45); }
-    .error-msg {
-      background:#FEF2F2; border:1px solid #FECACA; border-radius:var(--radius);
-      padding:10px 14px; font-size:.85rem; color:#991B1B;
-      margin-bottom:16px; display:flex; align-items:center; gap:8px;
-    }
-    .error-msg svg { width:16px; height:16px; flex-shrink:0; }
-    .demo-hint {
-      margin-top:20px; padding:14px; background:var(--bg);
-      border-radius:var(--radius); font-size:.8rem; color:var(--text-secondary);
-    }
-    .demo-hint h4 { font-size:.78rem; font-weight:700; margin-bottom:6px; }
-    .demo-hint code {
-      background:rgba(37,99,235,.08); color:var(--primary);
-      border-radius:4px; padding:2px 6px; font-family:monospace; font-size:.82rem;
-    }
-    .demo-hint .demo-row { display:flex; align-items:center; justify-content:space-between; padding:3px 0; }
-    .footer-text { text-align:center; margin-top:20px; font-size:.78rem; color:rgba(255,255,255,.5); }
+
+    .form-panel > * { opacity: 0; animation: fadeUp .45s ease forwards; }
+    .form-panel > *:nth-child(1) { animation-delay: .05s; }
+    .form-panel > *:nth-child(2) { animation-delay: .1s; }
+    .form-panel > *:nth-child(3) { animation-delay: .15s; }
+    .form-panel > *:nth-child(4) { animation-delay: .2s; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .left-body > * { opacity: 0; animation: fadeUp .5s ease forwards; }
+    .left-body .left-tag      { animation-delay: .1s; }
+    .left-body .left-heading  { animation-delay: .18s; }
+    .left-body .left-sub      { animation-delay: .26s; }
+    .left-body .metrics       { animation-delay: .34s; }
+    .left-body .features-list { animation-delay: .42s; }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="login-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
-          </svg>
-        </div>
-        <h1 data-i18n="loginTitle">Welcome Back</h1>
-        <p data-i18n="loginSub">Sign in to your account</p>
+<div class="page">
+
+  <!-- LEFT PANEL -->
+  <div class="left">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
       </div>
-      <div class="lang-switch">
-        <button class="lang-btn" data-lang="en">🌐 English</button>
-        <button class="lang-btn" data-lang="ne">🇳🇵 नेपाली</button>
+      <span class="brand-name">FabricPro</span>
+    </div>
+
+    <div class="left-body">
+      <div class="left-tag">Factory Management System</div>
+      <h1 class="left-heading">Manage your factory<br/>with <em>precision</em><br/>and clarity</h1>
+      <p class="left-sub">From task assignments to payroll, inventory to quality control — everything your clothing factory needs in one place.</p>
+      <div class="metrics">
+        <div class="metric"><div class="metric-val">100<span>%</span></div><div class="metric-lbl">Real Data</div></div>
+        <div class="metric"><div class="metric-val">Live</div><div class="metric-lbl">Updates</div></div>
+        <div class="metric"><div class="metric-val">Secure</div><div class="metric-lbl">Login</div></div>
       </div>
-      <form id="loginForm">
-        <div id="errorMsg" class="error-msg hidden">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>
-          </svg>
-          <span>Invalid username or password. Please try again.</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="username">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span data-i18n="username">Username</span>
-          </label>
-          <div class="input-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <input type="text" id="username" class="form-input" placeholder="Username" autocomplete="username" required/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="password">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span data-i18n="password">Password</span>
-          </label>
-          <div class="input-icon-wrap" style="position:relative;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <input type="password" id="password" class="form-input" placeholder="Password" autocomplete="current-password" required/>
-            <span class="pass-toggle" id="passToggle">
-              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-              </svg>
-            </span>
-          </div>
-        </div>
-        <div class="login-options">
-          <label class="checkbox-wrap">
-            <input type="checkbox" id="rememberMe"/>
-            <span data-i18n="rememberMe">Remember me</span>
-          </label>
-          <a href="#" class="forgot-link" data-i18n="forgotPass">Forgot password?</a>
-        </div>
-        <button type="submit" class="login-btn">
-          <span data-i18n="loginBtn">Sign In</span>
-        </button>
-      </form>
-      <div class="demo-hint">
-        <h4>🔑 Demo Credentials</h4>
-        <div class="demo-row"><span>Owner (Admin):</span><span><code>admin</code> / <code>admin123</code></span></div>
-        <div class="demo-row"><span>Worker:</span><span><code>worker1</code> / <code>pass123</code></span></div>
+      <div class="features-list">
+        <div class="feature-item"><div class="feature-dot"></div>Worker task tracking &amp; piece-rate earnings</div>
+        <div class="feature-item"><div class="feature-dot"></div>Live attendance check-in / check-out</div>
+        <div class="feature-item"><div class="feature-dot"></div>Inventory &amp; material request management</div>
+        <div class="feature-item"><div class="feature-dot"></div>Quality control &amp; performance leaderboard</div>
+        <div class="feature-item"><div class="feature-dot"></div>Automated payroll calculation</div>
       </div>
     </div>
-    <p class="footer-text">FabricPro Factory Management System &copy; 2025</p>
+
+    <div class="left-footer">FabricPro &copy; 2025 &nbsp;·&nbsp; All rights reserved</div>
   </div>
 
-  <script src="app.js"></script>
+  <!-- RIGHT PANEL -->
+  <div class="right">
+    <div class="form-panel">
+
+      <div class="mobile-brand">
+        <div class="brand-mark" style="width:38px;height:38px;border-radius:11px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:20px;height:20px;color:var(--primary)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <span style="font-size:1.2rem;font-weight:800;color:var(--primary)">FabricPro</span>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" id="tabLogin" onclick="showTab('login')">Sign In</button>
+        <button class="tab-btn" id="tabSignup" onclick="showTab('signup')">Create Account</button>
+      </div>
+
+      <div class="lang-row">
+        <button class="lang-btn active" onclick="switchLang('en',this)">🌐 English</button>
+        <button class="lang-btn" onclick="switchLang('ne',this)">🇳🇵 नेपाली</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="loginSection">
+        <div class="form-heading">
+          <h2 id="loginTitle">Welcome back</h2>
+          <p id="loginSub">Sign in with your account credentials</p>
+        </div>
+
+        <div id="loginAlert" class="alert alert-error hidden">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span id="loginAlertMsg"></span>
+        </div>
+
+        <form id="loginForm" autocomplete="on" novalidate>
+          <div class="field">
+            <label>Username</label>
+            <div class="input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <input type="text" id="loginUser" placeholder="Enter your username" autocomplete="username" required/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <input type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password" required/>
+              <button type="button" class="eye-btn" onclick="toggleEye('loginPass',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="options-row">
+            <label class="check-wrap"><input type="checkbox" id="rememberMe"/> Remember me</label>
+            <a href="#" class="forgot" id="forgotLink">Forgot password?</a>
+          </div>
+          <button type="submit" class="submit-btn" id="loginBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            <span id="loginBtnText">Sign In</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- SIGNUP -->
+      <div id="signupSection" class="hidden">
+        <div class="form-heading">
+          <h2>Create your account</h2>
+          <p>Fill in your details to get started</p>
+        </div>
+
+        <div id="signupAlert" class="alert alert-error hidden">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <span id="signupAlertMsg"></span>
+        </div>
+        <div id="signupSuccess" class="alert alert-success hidden">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Account created! Redirecting to sign in…</span>
+        </div>
+
+        <form id="signupForm" autocomplete="off" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label>Full Name</label>
+              <div class="input-wrap">
+                <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <input type="text" id="suName" placeholder="Your full name" required/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Username</label>
+              <div class="input-wrap">
+                <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
+                <input type="text" id="suUser" placeholder="Choose username" required/>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Email Address</label>
+            <div class="input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+              <input type="email" id="suEmail" placeholder="you@example.com"/>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Phone</label>
+              <div class="input-wrap">
+                <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.15-1.15a2 2 0 0 1 2.12-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+                <input type="tel" id="suPhone" placeholder="98XXXXXXXX"/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Department</label>
+              <div class="input-wrap">
+                <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+                <select id="suDept">
+                  <option value="Sewing">Sewing</option>
+                  <option value="Cutting">Cutting</option>
+                  <option value="Finishing">Finishing</option>
+                  <option value="Packaging">Packaging</option>
+                  <option value="Management">Management</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <input type="password" id="suPass" placeholder="At least 6 characters" oninput="checkStrength(this.value)" required/>
+              <button type="button" class="eye-btn" onclick="toggleEye('suPass',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="strength-row"><div class="strength-seg" id="ss1"></div><div class="strength-seg" id="ss2"></div><div class="strength-seg" id="ss3"></div><div class="strength-seg" id="ss4"></div></div>
+            <div class="strength-hint" id="strengthHint"></div>
+          </div>
+          <div class="field">
+            <label>Confirm Password</label>
+            <div class="input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <input type="password" id="suConfirm" placeholder="Repeat your password" required/>
+              <button type="button" class="eye-btn" onclick="toggleEye('suConfirm',this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn signup-btn" id="signupBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            <span id="signupBtnText">Create Account</span>
+          </button>
+          <p class="terms">By creating an account you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Tab switching ───────────────────── */
+function showTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('loginSection').classList.toggle('hidden', !isLogin);
+  document.getElementById('signupSection').classList.toggle('hidden', isLogin);
+  document.getElementById('tabLogin').classList.toggle('active', isLogin);
+  document.getElementById('tabSignup').classList.toggle('active', !isLogin);
+  hideEl('loginAlert'); hideEl('signupAlert'); hideEl('signupSuccess');
+}
+
+/* ── Language ────────────────────────── */
+function switchLang(lang, btn) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (lang === 'ne') {
+    document.getElementById('loginTitle').textContent    = 'स्वागत छ';
+    document.getElementById('loginSub').textContent      = 'आफ्नो खातामा साइन इन गर्नुहोस्';
+    document.getElementById('loginBtnText').textContent  = 'साइन इन';
+    document.getElementById('forgotLink').textContent    = 'पासवर्ड बिर्सनुभयो?';
+  } else {
+    document.getElementById('loginTitle').textContent    = 'Welcome back';
+    document.getElementById('loginSub').textContent      = 'Sign in with your account credentials';
+    document.getElementById('loginBtnText').textContent  = 'Sign In';
+    document.getElementById('forgotLink').textContent    = 'Forgot password?';
+  }
+}
+
+/* ── Helpers ─────────────────────────── */
+function hideEl(id) { document.getElementById(id)?.classList.add('hidden'); }
+function showEl(id) { document.getElementById(id)?.classList.remove('hidden'); }
+
+function showAlert(alertId, msgId, msg) {
+  document.getElementById(msgId).textContent = msg;
+  showEl(alertId);
+}
+
+function toggleEye(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.innerHTML = show
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+}
+
+function setLoading(btnId, textId, loading, label) {
+  const btn = document.getElementById(btnId);
+  const txt = document.getElementById(textId);
+  btn.disabled = loading;
+  if (loading) {
+    btn._orig = txt.textContent;
+    txt.textContent = label;
+    if (!btn.querySelector('.spinner')) {
+      const sp = document.createElement('div');
+      sp.className = 'spinner';
+      btn.insertBefore(sp, btn.firstChild);
+    }
+  } else {
+    if (btn._orig) txt.textContent = btn._orig;
+    btn.querySelector('.spinner')?.remove();
+  }
+}
+
+/* ── Password strength ───────────────── */
+function checkStrength(val) {
+  const colors = ['#C0392B','#C8922A','#2D7A4F','#2D5A3D'];
+  const labels = ['Weak','Fair','Good','Strong'];
+  let score = 0;
+  if (val.length >= 6)                           score++;
+  if (val.length >= 10)                          score++;
+  if (/[A-Z]/.test(val) && /[0-9]/.test(val))   score++;
+  if (/[^A-Za-z0-9]/.test(val))                 score++;
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('ss'+i).style.background = i <= score ? colors[score-1] : 'var(--border)';
+  }
+  const hint = document.getElementById('strengthHint');
+  hint.textContent = val.length ? (labels[score-1] || '') : '';
+  hint.style.color = val.length ? colors[score-1] : 'var(--muted)';
+}
+
+/* ── LOGIN ───────────────────────────── */
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  hideEl('loginAlert');
+
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+
+  if (!username || !password) {
+    showAlert('loginAlert', 'loginAlertMsg', 'Please enter both username and password.');
+    return;
+  }
+
+  setLoading('loginBtn', 'loginBtnText', true, 'Signing in…');
+
+  try {
+    const fd = new FormData();
+    fd.append('username', username);
+    fd.append('password', password);
+
+    const res = await fetch('/fabricpro/Backend/login.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { Accept: 'application/json' }, body: fd
+    });
+
+    let data;
+    try { data = await res.json(); }
+    catch { throw new Error('Server error. Make sure XAMPP is running and database is imported.'); }
+
+    if (data.success && data.user) {
+      localStorage.setItem('cfms_user',  JSON.stringify(data.user));
+      localStorage.setItem('cfms_token', data.token || '');
+      const role = String(data.user.role || '').toLowerCase();
+      window.location.href = role === 'admin' ? 'dashboard-owner.html' : 'dashboard-worker.html';
+    } else {
+      showAlert('loginAlert', 'loginAlertMsg', data.message || 'Invalid username or password.');
+      setLoading('loginBtn', 'loginBtnText', false);
+    }
+  } catch (err) {
+    showAlert('loginAlert', 'loginAlertMsg', err.message);
+    setLoading('loginBtn', 'loginBtnText', false);
+  }
+});
+
+/* ── SIGN UP ─────────────────────────── */
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  hideEl('signupAlert'); hideEl('signupSuccess');
+
+  const name    = document.getElementById('suName').value.trim();
+  const username= document.getElementById('suUser').value.trim().toLowerCase();
+  const email   = document.getElementById('suEmail').value.trim();
+  const phone   = document.getElementById('suPhone').value.trim();
+  const dept    = document.getElementById('suDept').value;
+  const pass    = document.getElementById('suPass').value;
+  const confirm = document.getElementById('suConfirm').value;
+
+  if (!name)              { showAlert('signupAlert','signupAlertMsg','Full name is required.'); return; }
+  if (!username)          { showAlert('signupAlert','signupAlertMsg','Username is required.'); return; }
+  if (username.length<3)  { showAlert('signupAlert','signupAlertMsg','Username must be at least 3 characters.'); return; }
+  if (!/^[a-z0-9_.]+$/.test(username)) { showAlert('signupAlert','signupAlertMsg','Username can only use letters, numbers, dots and underscores.'); return; }
+  if (!pass)              { showAlert('signupAlert','signupAlertMsg','Password is required.'); return; }
+  if (pass.length < 6)    { showAlert('signupAlert','signupAlertMsg','Password must be at least 6 characters.'); return; }
+  if (pass !== confirm)   { showAlert('signupAlert','signupAlertMsg','Passwords do not match.'); return; }
+
+  setLoading('signupBtn', 'signupBtnText', true, 'Creating account…');
+
+  try {
+    const fd = new FormData();
+    fd.append('full_name',  name);
+    fd.append('username',   username);
+    fd.append('email',      email);
+    fd.append('phone',      phone);
+    fd.append('department', dept);
+    fd.append('password',   pass);
+
+    const res = await fetch('/fabricpro/Backend/add_employee.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { Accept: 'application/json' }, body: fd
+    });
+
+    let data;
+    try { data = await res.json(); }
+    catch { throw new Error('Server error. Make sure XAMPP is running.'); }
+
+    if (data.success) {
+      document.getElementById('signupForm').reset();
+      checkStrength('');
+      showEl('signupSuccess');
+      setTimeout(() => showTab('login'), 2200);
+    } else {
+      showAlert('signupAlert', 'signupAlertMsg', data.message || 'Registration failed. Please try again.');
+    }
+  } catch (err) {
+    showAlert('signupAlert', 'signupAlertMsg', err.message);
+  }
+
+  setLoading('signupBtn', 'signupBtnText', false);
+});
+
+/* ── Auto-redirect if already logged in ─ */
+(function() {
+  try {
+    const u = JSON.parse(localStorage.getItem('cfms_user') || 'null');
+    const t = localStorage.getItem('cfms_token');
+    if (u && u.role && t) {
+      window.location.href = u.role === 'admin' ? 'dashboard-owner.html' : 'dashboard-worker.html';
+    }
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
