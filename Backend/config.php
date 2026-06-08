@@ -1,9 +1,31 @@
 <?php
 // FabricPro — config.php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'fabricpro_db');
+// ── Prevent stray output from corrupting JSON (critical on shared hosts) ───
+ob_start();                      // buffer everything; we'll discard any warnings
+error_reporting(0);              // suppress notices/warnings from leaking into response
+ini_set('display_errors', '0'); // never show PHP errors in HTTP response body
+// ═══════════════════════════════════════════════════════════════════════
+//  DATABASE CREDENTIALS — Edit this file ONLY, all others inherit from it
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── FOR LOCAL XAMPP DEVELOPMENT ────────────────────────────────────────
+// define('DB_HOST', 'localhost');
+// define('DB_USER', 'root');
+// define('DB_PASS', '');
+// define('DB_NAME', 'fabricpro_db');
+
+// ── FOR INFINITYFREE HOSTING ────────────────────────────────────────────
+//  1. Log in to InfinityFree → MySQL Databases → create a database
+//  2. Replace the values below with the MySQL details InfinityFree gives you
+//     DB_HOST  = the "MySQL Server" shown in InfinityFree panel (e.g. sql305.infinityfree.com)
+//     DB_USER  = the Database Username (e.g. if1234567_yourname)
+//     DB_PASS  = the password you set when creating the database
+//     DB_NAME  = the full database name (e.g. if1234567_fabricpro)
+define('DB_HOST', 'localhost');          // ← replace with InfinityFree MySQL host
+define('DB_USER', 'root');              // ← replace with InfinityFree MySQL username
+define('DB_PASS', '');                  // ← replace with InfinityFree MySQL password
+define('DB_NAME', 'fabricpro_db');      // ← replace with InfinityFree database name
+
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -17,6 +39,7 @@ function db(): mysqli {
     if ($conn === null) {
         $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
         if ($conn->connect_error) {
+            if (ob_get_length()) ob_clean();
             http_response_code(500);
             echo json_encode(['success'=>false,'message'=>'Database connection failed: '.$conn->connect_error]);
             exit;
@@ -27,11 +50,13 @@ function db(): mysqli {
 }
 
 function ok(array $payload = []): void {
+    if (ob_get_length()) ob_clean();
     echo json_encode(array_merge(['success'=>true], $payload));
     exit;
 }
 
 function fail(string $message, int $code = 400): void {
+    if (ob_get_length()) ob_clean();
     http_response_code($code);
     echo json_encode(['success'=>false,'message'=>$message]);
     exit;

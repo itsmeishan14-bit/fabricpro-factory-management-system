@@ -5,6 +5,29 @@
 
 'use strict';
 
+/* ── Dynamic API Base Path ──────────────────────────────────────────────────
+   Works automatically on both:
+     • XAMPP localhost  → http://localhost/fabricpro/Backend
+     • InfinityFree     → https://yourdomain.infinityfreeapp.com/Backend
+
+   HOW IT WORKS:
+     On localhost, window.location.pathname starts with /fabricpro/…
+     so we strip everything after the project root segment and append /Backend.
+     On InfinityFree the project IS the domain root, so the prefix is just /Backend.
+   ─────────────────────────────────────────────────────────────────────────── */
+const API_BASE = (() => {
+  const { hostname, pathname } = window.location;
+  // Detect local XAMPP environment (any localhost / 127.x / 192.168.x)
+  const isLocal = /^(localhost|127\.|192\.168\.)/.test(hostname);
+  if (isLocal) {
+    // Grab the first path segment as the project subfolder, e.g. "/fabricpro"
+    const projectFolder = '/' + (pathname.split('/')[1] || '');
+    return projectFolder + '/Backend';
+  }
+  // On InfinityFree (or any web host) the project IS the domain root
+  return '/Backend';
+})();
+
 /* ── i18n Dictionary ── */
 const i18n = {
   en: {
@@ -467,7 +490,7 @@ function requireAuth(requiredRole) {
   }
 
   if (!user) {
-    window.location.replace('index.html');
+    window.location.replace('../index.html');
     return null;
   }
 
@@ -500,7 +523,7 @@ function logout() {
   // Tell the server to destroy the session token
   const token = localStorage.getItem('cfms_token') || '';
   if (token) {
-    fetch('/fabricpro/Backend/logout.php', {
+    fetch(`${API_BASE}/logout.php`, {
       method: 'POST',
       credentials: 'same-origin',
       headers: { Authorization: 'Bearer ' + token }
@@ -508,7 +531,11 @@ function logout() {
   }
   localStorage.removeItem('cfms_user');
   localStorage.removeItem('cfms_token');
-  window.location.replace('index.html');
+  // Redirect back to login — works from both /Frontend/ and root
+  const loginPage = window.location.pathname.includes('/Frontend/')
+    ? '../index.html'
+    : 'index.html';
+  window.location.replace(loginPage);
 }
 
 /* ── API Helpers (Backend Ready) ── */
@@ -555,10 +582,10 @@ async function apiFetch(endpoint, options = {}) {
     ...options
   };
 
- const url = new URL(
-  `/fabricpro/Backend/${String(endpoint).replace(/^\/+/, '')}`,
-  window.location.origin
-);
+  const url = new URL(
+    `${API_BASE}/${String(endpoint).replace(/^\/+/, '')}`,
+    window.location.origin
+  );
   if (settings.query) {
     Object.entries(settings.query).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') url.searchParams.set(key, value);
@@ -597,7 +624,7 @@ async function apiFetch(endpoint, options = {}) {
     if ((response.status === 401 || response.status === 403) && getCurrentPage() !== 'index.html') {
       localStorage.removeItem('cfms_user');
       localStorage.removeItem('cfms_token');
-      window.location.replace('index.html');
+      window.location.replace('../index.html');
       return { success: false, message: 'Session expired.' };
     }
 

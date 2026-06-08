@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/config.php';
-requireAuth('admin');
 
+// Public signup allowed (default role: worker)
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') fail('Method not allowed.', 405);
 
 $fullName   = esc(post('full_name', post('name')));
@@ -39,7 +39,7 @@ if ($db->affected_rows < 1) fail('Failed to create employee.');
 $newId = $db->insert_id;
 
 ok([
-    'message'  => "Employee '$fullName' added successfully.",
+    'message'  => "Account for '$fullName' created successfully.",
     'employee' => [
         'id'       => $newId,
         'username' => $username,

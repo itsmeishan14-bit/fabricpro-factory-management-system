@@ -1,7 +1,10 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "fabricpro_db");
+/*
+ * db.php – Legacy connection file kept for backward compatibility.
+ * All new backend files use config.php directly (db() function).
+ * Update ONLY config.php when changing database credentials.
+ */
+require_once __DIR__ . '/config.php';
 
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
-?>
+// Expose $conn for any legacy code that still uses it directly
+$conn = db();

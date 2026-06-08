@@ -202,6 +202,10 @@
         <div class="feature-item"><div class="feature-dot"></div>Quality control &amp; performance leaderboard</div>
         <div class="feature-item"><div class="feature-dot"></div>Automated payroll calculation</div>
       </div>
+      <div>
+      <div>
+        
+      </div>
     </div>
 
     <div class="left-footer">FabricPro &copy; 2025 &nbsp;·&nbsp; All rights reserved</div>
@@ -366,6 +370,17 @@
 </div>
 
 <script>
+/* ── Dynamic API base: works on XAMPP localhost AND InfinityFree ── */
+const API_BASE = (() => {
+  const { hostname, pathname } = window.location;
+  const isLocal = /^(localhost|127\.|192\.168\.)/.test(hostname);
+  if (isLocal) {
+    const projectFolder = '/' + (pathname.split('/')[1] || '');
+    return projectFolder + '/Backend';
+  }
+  return '/Backend'; // live hosting: project is at domain root
+})();
+
 /* ── Tab switching ───────────────────── */
 function showTab(tab) {
   const isLogin = tab === 'login';
@@ -466,20 +481,20 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     fd.append('username', username);
     fd.append('password', password);
 
-    const res = await fetch('/fabricpro/Backend/login.php', {
+    const res = await fetch(`${API_BASE}/login.php`, {
       method: 'POST', credentials: 'same-origin',
       headers: { Accept: 'application/json' }, body: fd
     });
 
     let data;
     try { data = await res.json(); }
-    catch { throw new Error('Server error. Make sure XAMPP is running and database is imported.'); }
+    catch { throw new Error('Login failed — server did not return a valid response. Check your database connection.'); }
 
     if (data.success && data.user) {
       localStorage.setItem('cfms_user',  JSON.stringify(data.user));
       localStorage.setItem('cfms_token', data.token || '');
       const role = String(data.user.role || '').toLowerCase();
-      window.location.href = role === 'admin' ? 'dashboard-owner.html' : 'dashboard-worker.html';
+      window.location.href = role === 'admin' ? 'Frontend/dashboard-owner.html' : 'Frontend/dashboard-worker.html';
     } else {
       showAlert('loginAlert', 'loginAlertMsg', data.message || 'Invalid username or password.');
       setLoading('loginBtn', 'loginBtnText', false);
@@ -522,14 +537,14 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     fd.append('department', dept);
     fd.append('password',   pass);
 
-    const res = await fetch('/fabricpro/Backend/add_employee.php', {
+    const res = await fetch(`${API_BASE}/add_employee.php`, {
       method: 'POST', credentials: 'same-origin',
       headers: { Accept: 'application/json' }, body: fd
     });
 
     let data;
     try { data = await res.json(); }
-    catch { throw new Error('Server error. Make sure XAMPP is running.'); }
+    catch { throw new Error('Registration failed — server did not return a valid response.'); }
 
     if (data.success) {
       document.getElementById('signupForm').reset();
@@ -552,7 +567,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     const u = JSON.parse(localStorage.getItem('cfms_user') || 'null');
     const t = localStorage.getItem('cfms_token');
     if (u && u.role && t) {
-      window.location.href = u.role === 'admin' ? 'dashboard-owner.html' : 'dashboard-worker.html';
+      window.location.href = u.role === 'admin' ? 'Frontend/dashboard-owner.html' : 'Frontend/dashboard-worker.html';
     }
   } catch(e) {}
 })();
